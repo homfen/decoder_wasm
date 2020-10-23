@@ -158,9 +158,9 @@ static ErrorCode decode(AVCodecContext* dec_ctx, AVFrame* frame, AVPacket* pkt, 
 	else {
     // sws
     pSwsCtx = sws_getContext(dec_ctx->width, dec_ctx->height, dec_ctx->pix_fmt,
-        dec_ctx->width, dec_ctx->height, AV_PIX_FMT_BGR24,
+        dec_ctx->width, dec_ctx->height, AV_PIX_FMT_RGBA,
         SWS_BICUBIC, NULL, NULL, NULL);
-    frameSize = avpicture_get_size(AV_PIX_FMT_BGR24, dec_ctx->width, dec_ctx->height);
+    frameSize = avpicture_get_size(AV_PIX_FMT_RGBA, dec_ctx->width, dec_ctx->height);
     outBuff = (uint8_t*)av_malloc(frameSize);
     video_frameBGR = av_frame_alloc();
 

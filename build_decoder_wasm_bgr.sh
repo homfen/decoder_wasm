@@ -19,8 +19,8 @@ emcc decode_video_bgr.c ffmpeg/lib/libavcodec.a ffmpeg/lib/libavutil.a ffmpeg/li
    	-s EXTRA_EXPORTED_RUNTIME_METHODS="['addFunction']" \
 		-s RESERVED_FUNCTION_POINTERS=14 \
 		-s FORCE_FILESYSTEM=1 \
-    -s ASSERTIONS=1 \
     -s ALLOW_MEMORY_GROWTH=1 \
     -o dist/libffmpeg2.js
+    # -s ASSERTIONS=1 \
 
 echo "Finished Build"
