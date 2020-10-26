@@ -14,6 +14,8 @@ typedef void(*VideoCallback)(unsigned char* data_y, unsigned char* data_u, unsig
 #include <libavutil/pixfmt.h>
 #include <libswscale/swscale.h>
 
+#include "yuv_rgb.h"
+
 #define INBUF_SIZE 4096
 
 typedef enum ErrorCode {
@@ -157,12 +159,11 @@ static ErrorCode decode(AVCodecContext* dec_ctx, AVFrame* frame, AVPacket* pkt, 
 	}
 	else {
     // sws
-    pSwsCtx = sws_getContext(dec_ctx->width, dec_ctx->height, dec_ctx->pix_fmt,
-        dec_ctx->width, dec_ctx->height, AV_PIX_FMT_RGBA,
-        SWS_BICUBIC, NULL, NULL, NULL);
+    // pSwsCtx = sws_getContext(dec_ctx->width, dec_ctx->height, dec_ctx->pix_fmt,
+    //     dec_ctx->width, dec_ctx->height, AV_PIX_FMT_RGBA,
+    //     SWS_BICUBIC, NULL, NULL, NULL);
     frameSize = avpicture_get_size(AV_PIX_FMT_RGBA, dec_ctx->width, dec_ctx->height);
-    outBuff = (uint8_t*)av_malloc(frameSize);
-    video_frameBGR = av_frame_alloc();
+    // video_frameBGR = av_frame_alloc();
 
 		while (ret >= 0) {
 			ret = avcodec_receive_frame(dec_ctx, frame);
@@ -180,9 +181,13 @@ static ErrorCode decode(AVCodecContext* dec_ctx, AVFrame* frame, AVPacket* pkt, 
 				break;
 			}
 
-      res = decodeBgr(dec_ctx, frame, pkt);
+      outBuff = (uint8_t*)av_malloc(frameSize);
+      yuv420_rgba_std(outFrame->width, outFrame->height,outFrame->data[0], outFrame->data[1], outFrame->data[2], outFrame->linesize[0], outFrame->linesize[1], outBuff, outFrame->width * 4, YCBCR_601);
+      // res = decodeBgr(dec_ctx, frame, pkt);
 
 			videoCallback(outFrame->data[0], outFrame->data[1], outFrame->data[2], outFrame->linesize[0], outFrame->linesize[1], outFrame->linesize[2], outFrame->width, outFrame->height, outFrame->pts, outBuff, frameSize);
+
+      av_freep(&outBuff);
 
 		}
 	}
